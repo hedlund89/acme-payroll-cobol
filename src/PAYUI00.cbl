@@ -10,6 +10,9 @@
        PROGRAM-ID. PAYUI00.
 
        ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.
+           CRT STATUS IS WS-CRT-STATUS.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
            SELECT EMP-FILE   ASSIGN TO "data/EMPMAST.DAT"
@@ -80,6 +83,11 @@
            05  D-MSG              PIC X(40)   VALUE SPACES.
 
        01  WS-KEY                 PIC 9(04)   VALUE ZERO.
+       01  WS-CRT-STATUS          PIC 9(04)   VALUE ZERO.
+           88  KEY-ENTER                      VALUE 0000.
+           88  KEY-PF3                        VALUE 1003.
+           88  KEY-PF7                        VALUE 1007.
+           88  KEY-PF8                        VALUE 1008.
 
       ******************************************************************
        SCREEN SECTION.
@@ -137,7 +145,7 @@
                DISPLAY "NO EMPLOYEES LOADED." STOP RUN
            END-IF
            MOVE 1 TO WS-CUR
-           PERFORM 2000-SHOW UNTIL WS-KEY = 3
+           PERFORM 2000-SHOW UNTIL KEY-PF3
            PERFORM 9000-BYE
            STOP RUN.
 
@@ -170,15 +178,16 @@
            SET WS-IX TO WS-CUR
            PERFORM 3000-CALC
            PERFORM 4000-MOVE-DISPLAY
+      *    Draw the whole map once, then read one key. CRT STATUS tells
+      *    us which function key was pressed (set in SPECIAL-NAMES).
            DISPLAY PAY-MAP
            ACCEPT PAY-MAP
-           ACCEPT WS-KEY FROM ESCAPE KEY
-           EVALUATE WS-KEY
-               WHEN 8
+           EVALUATE TRUE
+               WHEN KEY-PF8
                    IF WS-CUR < WS-EMP-COUNT
                        ADD 1 TO WS-CUR
                    END-IF
-               WHEN 7
+               WHEN KEY-PF7
                    IF WS-CUR > 1
                        SUBTRACT 1 FROM WS-CUR
                    END-IF
