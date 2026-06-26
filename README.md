@@ -37,9 +37,37 @@ Zwei Batch-Programme, gekoppelt über eine Zwischendatei und geteilte Copybooks:
 
 ```bash
 brew install gnu-cobol      # GnuCOBOL einmalig installieren
-./build.sh                  # kompiliert PAYRUN00 + PAYRPT00 nach bin/
-./run.sh                    # führt den Batch aus und zeigt den Report
+./build.sh                  # kompiliert PAYRUN00 + PAYRPT00 + PAYUI00
+./run.sh                    # BATCH: führt den Lohnlauf aus und zeigt den Report
+./ui.sh                     # GRÜNSCHIRM: interaktive 3270-Maske (echtes Terminal nötig)
 ```
+
+### Grünschirm-Inquiry (PAYUI00)
+
+Eine interaktive COBOL-`SCREEN SECTION`-Maske im klassischen 3270-Stil. Lädt die
+Mitarbeiter beim Start in eine In-Core-Tabelle und zeigt pro Mitarbeiter die Stammdaten
+**und** die live berechnete Lohnabrechnung — mit denselben Regeln wie der Batch.
+
+```
+ACME PAYROLL INQUIRY              PAYUI00         EMP  1 OF  7
+----------------------------------------------------------------
+  EMP ID  : 10001               STATUS: A
+  NAME    : ALICE SCHMIDT
+  DEPT    : SALE                GRADE : E
+  MARITAL : M
+  BASE SAL:  95,000.00
+  HOURS   :  45.00
+------------- PAY CALCULATION ---------------------------------
+    GROSS     :   2,169.33
+    ALLOWANCE :     575.39
+    TAX       :     247.02
+    NET PAY   :   2,497.70
+
+ENTER=CALC  PF7=PREV  PF8=NEXT  PF3=EXIT
+```
+
+Tasten: **PF8** nächster · **PF7** voriger · **PF3** (oder ESC) beenden. (Auf dem Mac sind
+PF-Tasten die F-Tasten, ggf. mit `fn`.)
 
 Beispiel-Output (Auszug):
 ```
