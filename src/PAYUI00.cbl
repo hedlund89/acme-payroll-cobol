@@ -83,6 +83,7 @@
            05  D-MSG              PIC X(40)   VALUE SPACES.
 
        01  WS-KEY                 PIC 9(04)   VALUE ZERO.
+       01  WS-DUMMY               PIC X(01)   VALUE SPACE.
        01  WS-CRT-STATUS          PIC 9(04)   VALUE ZERO.
            88  KEY-ENTER                      VALUE 0000.
            88  KEY-PF3                        VALUE 1003.
@@ -137,6 +138,8 @@
            05  LINE 22 COL 1  PIC X(40) FROM D-MSG.
            05  LINE 24 COL 1  VALUE
                "ENTER=CALC  PF7=PREV  PF8=NEXT  PF3=EXIT".
+      *    Hidden input field so ACCEPT actually waits for a keypress.
+           05  LINE 24 COL 50 PIC X(01) USING WS-DUMMY AUTO.
 
        PROCEDURE DIVISION.
        0000-MAIN.
