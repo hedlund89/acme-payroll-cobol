@@ -1,0 +1,14 @@
+# Compiled executables
+bin/
+*.o
+*.so
+
+# Generated batch output (EMPMAST.DAT is the input and IS tracked)
+data/PAYRESULT.DAT
+data/PAYREGISTER.TXT
+data/WTEST.DAT
+data/WT2.DAT
+data/WT3.DAT
+
+.DS_Store
+ONEPAGER-fuer-agent-test.md
