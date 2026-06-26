@@ -203,42 +203,43 @@
            IF T-STATUS (WS-IX) = "T"
                MOVE 0 TO WS-GROSS WS-ALLOW WS-TAX WS-NET
                MOVE "** TERMINATED - NOT PAID **" TO D-MSG
-               GO TO 3000-EXIT
-           END-IF
-           MOVE SPACES TO D-MSG
-           COMPUTE WS-HRLY-RATE ROUNDED =
-               T-BASE (WS-IX) / WS-WPY / WS-STD-HOURS
-           IF T-HOURS (WS-IX) > WS-STD-HOURS
-               COMPUTE WS-OT-HOURS = T-HOURS (WS-IX) - WS-STD-HOURS
-               COMPUTE WS-GROSS ROUNDED =
-                   (WS-HRLY-RATE * WS-STD-HOURS)
-                 + (WS-HRLY-RATE * WS-OT-FACTOR * WS-OT-HOURS)
            ELSE
-               COMPUTE WS-GROSS ROUNDED =
-                   WS-HRLY-RATE * T-HOURS (WS-IX)
-           END-IF
-      *    GRADE ALLOWANCE - INCL. UNDOCUMENTED GRADE-E +250
-           EVALUATE T-GRADE (WS-IX)
-               WHEN "B" COMPUTE WS-ALLOW = WS-GROSS * 0.05
-               WHEN "C" COMPUTE WS-ALLOW = WS-GROSS * 0.08
-               WHEN "D" COMPUTE WS-ALLOW = WS-GROSS * 0.12
-               WHEN "E" COMPUTE WS-ALLOW = (WS-GROSS * 0.15) + 250.00
-               WHEN OTHER MOVE 0 TO WS-ALLOW
-           END-EVALUATE
-      *    PROGRESSIVE TAX - INCL. UNDOCUMENTED MARITAL 10% RELIEF
-           COMPUTE WS-TAXABLE = WS-GROSS + WS-ALLOW
-           IF T-MARITAL (WS-IX) = "M"
-               COMPUTE WS-TAXABLE = WS-TAXABLE * 0.90
-           END-IF
-           EVALUATE TRUE
-               WHEN WS-TAXABLE <= WS-BRK (1) MOVE 10.00 TO WS-RATE-PCT
-               WHEN WS-TAXABLE <= WS-BRK (2) MOVE 22.00 TO WS-RATE-PCT
-               WHEN OTHER                    MOVE 35.00 TO WS-RATE-PCT
-           END-EVALUATE
-           COMPUTE WS-TAX ROUNDED = WS-TAXABLE * (WS-RATE-PCT / 100)
-           COMPUTE WS-NET = WS-GROSS + WS-ALLOW - WS-TAX.
-       3000-EXIT.
-           EXIT.
+               MOVE SPACES TO D-MSG
+               COMPUTE WS-HRLY-RATE ROUNDED =
+                   T-BASE (WS-IX) / WS-WPY / WS-STD-HOURS
+               IF T-HOURS (WS-IX) > WS-STD-HOURS
+                   COMPUTE WS-OT-HOURS = T-HOURS (WS-IX) - WS-STD-HOURS
+                   COMPUTE WS-GROSS ROUNDED =
+                       (WS-HRLY-RATE * WS-STD-HOURS)
+                     + (WS-HRLY-RATE * WS-OT-FACTOR * WS-OT-HOURS)
+               ELSE
+                   COMPUTE WS-GROSS ROUNDED =
+                       WS-HRLY-RATE * T-HOURS (WS-IX)
+               END-IF
+      *        GRADE ALLOWANCE - INCL. UNDOCUMENTED GRADE-E +250
+               EVALUATE T-GRADE (WS-IX)
+                   WHEN "B" COMPUTE WS-ALLOW = WS-GROSS * 0.05
+                   WHEN "C" COMPUTE WS-ALLOW = WS-GROSS * 0.08
+                   WHEN "D" COMPUTE WS-ALLOW = WS-GROSS * 0.12
+                   WHEN "E" COMPUTE WS-ALLOW = (WS-GROSS * 0.15) + 250.00
+                   WHEN OTHER MOVE 0 TO WS-ALLOW
+               END-EVALUATE
+      *        PROGRESSIVE TAX - INCL. UNDOCUMENTED MARITAL 10% RELIEF
+               COMPUTE WS-TAXABLE = WS-GROSS + WS-ALLOW
+               IF T-MARITAL (WS-IX) = "M"
+                   COMPUTE WS-TAXABLE = WS-TAXABLE * 0.90
+               END-IF
+               EVALUATE TRUE
+                   WHEN WS-TAXABLE <= WS-BRK (1)
+                       MOVE 10.00 TO WS-RATE-PCT
+                   WHEN WS-TAXABLE <= WS-BRK (2)
+                       MOVE 22.00 TO WS-RATE-PCT
+                   WHEN OTHER
+                       MOVE 35.00 TO WS-RATE-PCT
+               END-EVALUATE
+               COMPUTE WS-TAX ROUNDED = WS-TAXABLE * (WS-RATE-PCT / 100)
+               COMPUTE WS-NET = WS-GROSS + WS-ALLOW - WS-TAX
+           END-IF.
 
       ******************************************************************
        4000-MOVE-DISPLAY.
